@@ -1,0 +1,51 @@
+Resources:
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AdditionalInfo: !Ref String
+      Affinity: !Ref String
+      AvailabilityZone: !Ref String
+      BlockDeviceMappings:
+        - BlockDeviceMapping: {}
+      CpuOptions:
+        CoreCount: !Ref Integer
+        ThreadsPerCore: !Ref Integer
+      CreditSpecification:
+        CPUCredits: !Ref String
+      DisableApiTermination: !Ref Boolean
+      EbsOptimized: !Ref Boolean
+      ElasticGpuSpecifications:
+        - Type: !Ref String
+      ElasticInferenceAccelerators:
+        - Type: !Ref String
+      EnclaveOptions:
+        Enabled: !Ref Boolean
+      HibernationOptions:
+        Configured: !Ref Boolean
+      HostId: !Ref String
+      HostResourceGroupArn: !Ref String
+      IamInstanceProfile: !Ref String
+      ImageId: !Ref String
+      InstanceInitiatedShutdownBehavior: !Ref String
+      InstanceType: !Ref String
+      Ipv6AddressCount: !Ref Integer
+      Ipv6Addresses:
+        - Ipv6Address: !Ref String
+      KernelId: !Ref String
+      KeyName: !Ref String
+      LaunchTemplate:
+        LaunchTemplateSpecification: {}
+      LicenseSpecifications:
+        - LicenseSpecification: {}
+      MetadataOptions:
+        HttpTokens: !Ref String
+        HttpPutResponseHopLimit: !Ref Integer
+        HttpEndpoint: !Ref String
+      Monitoring: !Ref Boolean
+      NetworkInterfaces:
+        - NetworkInterface: {}
+      PlacementGroupName: !Ref String
+      PrivateDnsNameOptions:
+        HostnameType: !Ref String
+        EnableResourceNameDnsARecord: !Ref Boolean
+       
