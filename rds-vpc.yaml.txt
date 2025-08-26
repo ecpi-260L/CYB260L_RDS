@@ -1,0 +1,131 @@
+# Description of what this change includes
+# Revision number
+# Date
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create VPC-rayhor9581 in us-west-2 spanning three AZs with internet access
+Conditions:
+  InUsWest2: !Equals [!Ref 'AWS::Region', 'us-west-2']
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Condition: InUsWest2
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: VPC-rayhor9581
+        - Key: Owner
+          Value: rayhor9581
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Condition: InUsWest2
+    Properties:
+      Tags:
+        - Key: Name
+          Value: VPC-rayhor9581-igw
+        - Key: Owner
+          Value: rayhor9581
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Condition: InUsWest2
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Condition: InUsWest2
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: VPC-rayhor9581-public-rt
+        - Key: Owner
+          Value: rayhor9581
+  DefaultRouteToIGW:
+    Type: AWS::EC2::Route
+    Condition: InUsWest2
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Condition: InUsWest2
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.0.0/20
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Public-A
+        - Key: Owner
+          Value: rayhor9581
+  PublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Condition: InUsWest2
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.16.0/20
+      AvailabilityZone: !Select [1, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Public-B
+        - Key: Owner
+          Value: rayhor9581
+  PublicSubnetC:
+    Type: AWS::EC2::Subnet
+    Condition: InUsWest2
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.32.0/20
+      AvailabilityZone: !Select [2, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Public-C
+        - Key: Owner
+          Value: rayhor9581
+  SubnetAPublicRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: InUsWest2
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+  SubnetBPublicRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: InUsWest2
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+  SubnetCPublicRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: InUsWest2
+    Properties:
+      SubnetId: !Ref PublicSubnetC
+      RouteTableId: !Ref PublicRouteTable
+Outputs:
+  VPCId:
+    Condition: InUsWest2
+    Value: !Ref VPC
+    Export:
+      Name: VPC-rayhor9581-VPCId
+  PublicSubnetIds:
+    Condition: InUsWest2
+    Value: !Join [",", [!Ref PublicSubnetA, !Ref PublicSubnetB, !Ref PublicSubnetC]]
+    Export:
+      Name: VPC-rayhor9581-PublicSubnetIds
+  RouteTableId:
+    Condition: InUsWest2
+    Value: !Ref PublicRouteTable
+    Export:
+      Name: VPC-rayhor9581-RouteTableId
+  InternetGatewayId:
+    Condition: InUsWest2
+    Value: !Ref InternetGateway
+    Export:
+      Name: VPC-rayhor9581-InternetGatewayId
